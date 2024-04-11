@@ -11,13 +11,16 @@ app = FastAPI()
 
 # Other applications may only call this FastAPI application it it comes from this origin
 origins = [
-    'http://localhost:3000'
+    "http://localhost:3000",
 ]
 
 ## Set the origin as the only allowed middleware
 app.add_middleware( 
     CORSMiddleware,
     allow_origins=origins,
+    allow_credentials = True,
+    allow_methods=['*'],
+    allow_headers=['*']
 )
 
 class ItemBase(BaseModel):
@@ -60,3 +63,17 @@ async def create_item(item: ItemBase, db: Session = db_dependency) -> ItemModel:
 async def read_items(db: Session = db_dependency, index: int = 0, limit: int = 100) -> List[ItemModel]:
     items = db.query(models.Item).offset(index).limit(limit).all()
     return items
+
+@app.get("/control/send")
+async def send_action(action: str):
+    if action == "play":
+        # Do Something
+        return {"message": "Action 'play' executed"}
+    elif action == "pause":
+        # Do Something
+        return {"message": "Action 'pause' executed"}
+    elif action == "stop":
+        # Do Something
+        return {"message": "Action 'stop' executed"}
+    else:
+        return {"error": "Invalid action"}
