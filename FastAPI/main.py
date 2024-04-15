@@ -1,7 +1,6 @@
 from fastapi import FastAPI, HTTPException, Depends
 from typing import Annotated, List
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
 
 from database import SessionLocal, engine
 import models
@@ -23,16 +22,6 @@ app.add_middleware(
     allow_headers=['*']
 )
 
-class ItemBase(BaseModel):
-    name: str
-    amount: float
-    is_enabled: bool
-
-class ItemModel(ItemBase):
-    id: int
-    
-    class Config:
-        from_attributes = True
 
 def get_db():
     db = SessionLocal()
@@ -77,3 +66,25 @@ async def send_action(action: str):
         return {"message": "Action 'stop' executed"}
     else:
         return {"error": "Invalid action"}
+    
+@app.get("/categories/")
+async def get_categories(db: Session = db_dependency) -> List[Category]:
+    # TODO: Retreive from database
+    categories = [
+        {
+            "name": "Type",
+            "icon": "bi-cast",
+            "options": [['All', True], ['Film', False], ['Series', False], ['Person', False]]
+        },
+        {
+            "name": "Streaming Services",
+            "icon": "bi-film",
+            "options": [['Netflix', True], ['Disney+', True], ['Amazon Prime', True], ['HBOMax', True]]
+        },
+        {
+            "name": "Regions",
+            "icon": "bi-globe",
+            "options": [['EU', True], ['US', True], ['AU', False], ['CA', False]]
+        }
+    ]
+    return [Category(**category) for category in categories]

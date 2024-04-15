@@ -1,103 +1,46 @@
-import React, {useState, useEffect} from 'react'
-import api from './api'
+import Sidebar from './components/Sidebar';
+import Content from './Content';
 
 function App() {
-  const [items, setItems] = useState([]);
-  const [formData, setFormData] = useState({
-    name: '',
-    amount: '',
-    is_enabled: false
-  });
 
-  const fetchItem = async () => {
-    // Create a 'get' reponse
-    const response = await api.get('/items/');
+  const categories = [
+    {
+      name: 'Type',
+      icon: 'bi-cast',
+      options: [['All', true], ['Film', false], ['Series', false], ['Person', false]]
+    },
+    {
+      name: 'Streaming Services',
+      icon: 'bi-film',
+      options: [['Netflix', true], ['Disney+', true], ['Amazon Prime', true], ['HBOMax', true]]
+    },
+    {
+      name: 'Regions',
+      icon: 'bi-globe',
+      options: [['EU', true], ['US', true], ['AU', false], ['CA', false]]
+    }
+  ];
 
-    // Set the reponse data
-    setItems(response.data);
-  }
-
-  useEffect(() => {
-    fetchItem();
-  }, []);
-
-  const handleInputChange = (event) => {
-    const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
-    setFormData({
-      ...formData,
-      [event.target.name]: value
-    });
-  };
-
-  const handleFormSubmit = async (event) => {
-    event.preventDefault();
-    await api.post('/items/', formData);
-    fetchItem();
-    setFormData({
-      name: '',
-      amount: '',
-      is_enabled: false
-    });
+  const handleFilter = (category, option) => {
+    console.log(`Filtering ${category}: ${option}`);
   };
 
   return (
     <div className="App">
-      <nav className='navbar navbar-dark bg-primary'>
+      <nav className='navbar navbar-light bg-light shadow-sm'>
         <div className='container-fluid'>
           <a className='navbar-brand' href='#'>
-            Test App
+            <img src="assets/img/logo-no-text.png" alt="logo" height="40" />
           </a>
         </div>
       </nav>
-
-      <div className='container'>
-        <form onSubmit={handleFormSubmit}>
-          <div className='mb-3 mt-3'>
-            <label htmlFor='name' className='form-label'> 
-              Name 
-            </label>
-            <input type='text' className='form-control' id='name' name='name' onChange={handleInputChange} value={formData.name}/>
+      <div className="container-fluid">
+        <div className="row flex-nowrap">
+          <Sidebar categories={categories} onFilter={handleFilter} />
+          <div className="col py-3">
+            <Content/>
           </div>
-
-          <div className='mb-3'>
-            <label htmlFor='amount' className='form-label'> 
-              Amount 
-            </label>
-            <input type='text' className='form-control' id='amount' name='amount' onChange={handleInputChange} value={formData.amount}/>
-          </div>
-
-          <div className='mb-3'>
-            <label htmlFor='is_enabled' className='form-label'> 
-              Is Enabled
-            </label>
-            <input type='checkbox' className='ms-2' id='is_enabled' name='is_enabled' onChange={handleInputChange} value={formData.amount}/>
-          </div>
-
-          <button type='submit' className='btn btn-primary'>
-            Submit
-          </button>
-        </form>
-
-        <hr/>
-
-        <table className='mt-3 table table-bordered table-striped table-hover'>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Amount</th>
-              <th>Is Enabled?</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((item) => (
-              <tr key={item.id}>
-                <td>{item.name}</td>
-                <td>{item.amount}</td>
-                <td>{item.is_enabled ? 'True' : 'False'}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        </div>
       </div>
     </div>
   );
