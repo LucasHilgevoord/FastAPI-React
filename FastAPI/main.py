@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Query
 from typing import List
 from sqlalchemy.orm import Session
 
@@ -68,6 +68,10 @@ async def send_action(action: str):
     else:
         return {"error": "Invalid action"}
     
+@app.get("/player/play/")
+async def play(player_id: str, deeplink: str):
+    return {"player_id": player_id, "deeplink": deeplink}
+
 @app.get("/filters/")
 async def get_filters(db: Session = db_dependency) -> List[Filter]:
     # TODO: Retreive from database
