@@ -10,7 +10,7 @@ const Content = () => {
     const onSearchChanged = async (event) => {
         const searchValue = event.target.value;
 
-        // Return possible matches
+        // TODO: Return matching results
         console.log('Search value:', searchValue);
     };
 

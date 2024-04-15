@@ -15,6 +15,38 @@ origins = [
     "http://localhost:3000",
 ]
 
+filters = [
+    {
+        "name": "Type",
+        "icon": "bi-cast",
+        "options": [
+            {"name": 'All', "enabled": True},
+            {"name": 'Film', "enabled": False},
+            {"name": 'Series', "enabled": False},
+            {"name": 'Person', "enabled": False},
+        ]
+    },
+    {
+        "name": "Streaming Services",
+        "icon": "bi-film",
+        "options": [
+            {"name": 'Netflix', "enabled": True},
+            {"name": 'Disney+', "enabled": True},
+            {"name": 'Amazon Prime', "enabled": True},
+            {"name": 'HBOMax', "enabled": True},
+        ]
+    },
+    {
+        "name": "Regions",
+        "icon": "bi-globe",
+        "options": [
+            {"name": 'EU', "enabled": True},
+            {"name": 'US', "enabled": True},
+            {"name": 'CA', "enabled": True},
+        ]
+    }
+]
+
 ## Set the origin as the only allowed middleware
 app.add_middleware( 
     CORSMiddleware,
@@ -37,23 +69,12 @@ db_dependency = Depends(get_db)
 # Create the database, the database will automaticly create the tables
 models.Base.metadata.create_all(bind=engine)
 
+# Endpoint for root
 @app.get("/")
 async def root():
     return ("Message", "Root")
 
-@app.post("/items/")
-async def create_item(item: ItemBase, db: Session = db_dependency) -> ItemModel:
-    db_item = models.Item(**item.dict())
-    db.add(db_item)
-    db.commit()
-    db.refresh(db_item)
-    return db_item
-
-@app.get("/items/")
-async def read_items(db: Session = db_dependency, index: int = 0, limit: int = 100) -> List[ItemModel]:
-    items = db.query(models.Item).offset(index).limit(limit).all()
-    return items
-
+# Endpoint for basic controls
 @app.get("/control/send")
 async def send_action(action: str):
     if action == "play":
@@ -67,43 +88,21 @@ async def send_action(action: str):
         return {"message": "Action 'stop' executed"}
     else:
         return {"error": "Invalid action"}
-    
+
+# Endpoint for playback of deeplink
 @app.get("/player/play/")
 async def play(player_id: str, deeplink: str):
+    # TODO: Get data from the correct place
     return {"player_id": player_id, "deeplink": deeplink}
 
+# Endpoint for playback feedback
+@app.get("/player/metadata/")
+async def play(player_id: str):
+    # TODO: Get data from the correct place
+    return {"player_id": player_id, "status:": "Playing", "title:": "Breaking Bad"}
+
+# Endpoint for filter options
 @app.get("/filters/")
 async def get_filters(db: Session = db_dependency) -> List[Filter]:
     # TODO: Retreive from database
-    filters = [
-        {
-            "name": "Type",
-            "icon": "bi-cast",
-            "options": [
-                {"name": 'All', "enabled": True},
-                {"name": 'Film', "enabled": False},
-                {"name": 'Series', "enabled": False},
-                {"name": 'Person', "enabled": False},
-            ]
-        },
-        {
-            "name": "Streaming Services",
-            "icon": "bi-film",
-            "options": [
-                {"name": 'Netflix', "enabled": True},
-                {"name": 'Disney+', "enabled": True},
-                {"name": 'Amazon Prime', "enabled": True},
-                {"name": 'HBOMax', "enabled": True},
-            ]
-        },
-        {
-            "name": "Regions",
-            "icon": "bi-globe",
-            "options": [
-                {"name": 'EU', "enabled": True},
-                {"name": 'US', "enabled": True},
-                {"name": 'CA', "enabled": True},
-            ]
-        }
-    ]
     return [Filter(**filter) for filter in filters]
