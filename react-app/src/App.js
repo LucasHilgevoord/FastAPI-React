@@ -1,25 +1,25 @@
+import React, { useState, useEffect } from 'react';
+import api from './api';
+
 import Sidebar from './components/Sidebar';
-import Content from './Content';
+import Content from './components/Content';
 
 function App() {
+  const [categories, setCategories] = useState([]);
 
-  const categories = [
-    {
-      name: 'Type',
-      icon: 'bi-cast',
-      options: [['All', true], ['Film', false], ['Series', false], ['Person', false]]
-    },
-    {
-      name: 'Streaming Services',
-      icon: 'bi-film',
-      options: [['Netflix', true], ['Disney+', true], ['Amazon Prime', true], ['HBOMax', true]]
-    },
-    {
-      name: 'Regions',
-      icon: 'bi-globe',
-      options: [['EU', true], ['US', true], ['AU', false], ['CA', false]]
-    }
-  ];
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await api.get('/categories/');
+        setCategories(response.data);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+  
+    fetchCategories();
+  }, []);
+  
 
   const handleFilter = (category, option) => {
     console.log(`Filtering ${category}: ${option}`);

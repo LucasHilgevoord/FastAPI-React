@@ -1,14 +1,4 @@
-# from database import Base
-# from sqlalchemy import Column, Integer, String, Boolean, Float
-
-# class Item(Base):
-#     __tablename__ = 'items'
-    
-#     id = Column(Integer, primary_key=True, index=True)
-#     name = Column(String)
-#     amount = Column(Float)
-#     is_enabled = Column(Boolean)
-
+from database import Base
 from pydantic import BaseModel
 from typing import List
 
@@ -22,8 +12,12 @@ class ItemModel(ItemBase):
     
     class Config:
         from_attributes = True
+        
+class CategoryItem(BaseModel):
+    name: str
+    enabled: bool
 
 class Category(BaseModel):
     name: str
     icon: str
-    options: List[List[str, bool]]
+    options: List[CategoryItem]

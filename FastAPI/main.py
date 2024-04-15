@@ -1,10 +1,12 @@
-from fastapi import FastAPI, HTTPException, Depends
-from typing import Annotated, List
+from fastapi import FastAPI, Depends
+from typing import List
 from sqlalchemy.orm import Session
 
 from database import SessionLocal, engine
-import models
 from fastapi.middleware.cors import CORSMiddleware
+
+import models
+from models import ItemBase, ItemModel, Category
 
 app = FastAPI()
 
@@ -21,7 +23,6 @@ app.add_middleware(
     allow_methods=['*'],
     allow_headers=['*']
 )
-
 
 def get_db():
     db = SessionLocal()
@@ -74,17 +75,31 @@ async def get_categories(db: Session = db_dependency) -> List[Category]:
         {
             "name": "Type",
             "icon": "bi-cast",
-            "options": [['All', True], ['Film', False], ['Series', False], ['Person', False]]
+            "options": [
+                {"name": 'All', "enabled": True},
+                {"name": 'Film', "enabled": False},
+                {"name": 'Series', "enabled": False},
+                {"name": 'Person', "enabled": False},
+            ]
         },
         {
             "name": "Streaming Services",
             "icon": "bi-film",
-            "options": [['Netflix', True], ['Disney+', True], ['Amazon Prime', True], ['HBOMax', True]]
+            "options": [
+                {"name": 'Netflix', "enabled": True},
+                {"name": 'Disney+', "enabled": True},
+                {"name": 'Amazon Prime', "enabled": True},
+                {"name": 'HBOMax', "enabled": True},
+            ]
         },
         {
             "name": "Regions",
             "icon": "bi-globe",
-            "options": [['EU', True], ['US', True], ['AU', False], ['CA', False]]
+            "options": [
+                {"name": 'EU', "enabled": True},
+                {"name": 'US', "enabled": True},
+                {"name": 'CA', "enabled": True},
+            ]
         }
     ]
     return [Category(**category) for category in categories]
