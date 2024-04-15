@@ -5,24 +5,24 @@ import Sidebar from './components/Sidebar';
 import Content from './components/Content';
 
 function App() {
-  const [categories, setCategories] = useState([]);
+  const [filters, setfilters] = useState([]);
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchfilters = async () => {
       try {
-        const response = await api.get('/categories/');
-        setCategories(response.data);
+        const response = await api.get('/filters/');
+        setfilters(response.data);
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error('Error fetching filters:', error);
       }
     };
   
-    fetchCategories();
+    fetchfilters();
   }, []);
   
 
-  const handleFilter = (category, option) => {
-    console.log(`Filtering ${category}: ${option}`);
+  const handleFilter = (filter, option) => {
+    console.log(`Filtering ${filter}: ${option}`);
   };
 
   return (
@@ -36,7 +36,7 @@ function App() {
       </nav>
       <div className="container-fluid">
         <div className="row flex-nowrap">
-          <Sidebar categories={categories} onFilter={handleFilter} />
+          <Sidebar filters={filters} onFilter={handleFilter} />
           <div className="col py-3">
             <Content/>
           </div>

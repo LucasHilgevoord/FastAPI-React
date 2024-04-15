@@ -13,11 +13,11 @@ class ItemModel(ItemBase):
     class Config:
         from_attributes = True
         
-class CategoryItem(BaseModel):
+class FilterItem(BaseModel):
     name: str
     enabled: bool
 
-class Category(BaseModel):
+class Filter(BaseModel):
     name: str
     icon: str
-    options: List[CategoryItem]
+    options: List[FilterItem]

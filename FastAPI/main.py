@@ -6,7 +6,7 @@ from database import SessionLocal, engine
 from fastapi.middleware.cors import CORSMiddleware
 
 import models
-from models import ItemBase, ItemModel, Category
+from models import ItemBase, ItemModel, Filter
 
 app = FastAPI()
 
@@ -68,10 +68,10 @@ async def send_action(action: str):
     else:
         return {"error": "Invalid action"}
     
-@app.get("/categories/")
-async def get_categories(db: Session = db_dependency) -> List[Category]:
+@app.get("/filters/")
+async def get_filters(db: Session = db_dependency) -> List[Filter]:
     # TODO: Retreive from database
-    categories = [
+    filters = [
         {
             "name": "Type",
             "icon": "bi-cast",
@@ -102,4 +102,4 @@ async def get_categories(db: Session = db_dependency) -> List[Category]:
             ]
         }
     ]
-    return [Category(**category) for category in categories]
+    return [Filter(**filter) for filter in filters]
